@@ -40,17 +40,27 @@
             </div>
             <div id="wynik3" class="wynik"></div>
 
+            <div>
+                <label for="element4">Wybiecz  z czy bez:</label>
+                <select id="element4">
+                    <option value="Z narzedziami sakwa i peleryna">Z narzedziami sakwa i peleryna</option>
+                    <option value="Bez">Bez</option>
+                </select>
+            </div>
+            <div id="wynik4" class="wynik"></div>
+
             <div id="total-wynik" class="total-wynik"></div>
         </div>
         <div class="right">
             <h2>Instrukcja Craftowania</h2>
             <textarea id="crafting-instruction" readonly>
 1. Zrób 8(czapka,buty) 4(klata) części setu T2
-2 Zbadaj aby otrzymać fame na crafting T3 i wytworz Set T3
-3 Następnie aby odblokować T4 należy wytworzyć 2 razy calego seta T3
-4 Zbadaj sety T3 aby otrzymac fame i odblokować crafting T4
-5 Wytworz set T4 i ciesz sie swoim secikiem
-asdasd
+2. Zbadaj aby otrzymać fame na crafting T3 i wytworz Set T3
+3. Następnie aby odblokować T4 należy wytworzyć 2 razy calego seta T3
+4. Zbadaj sety T3 aby otrzymac fame i odblokować crafting T4
+5. Wytworz set T4 i ciesz sie swoim secikiem
+6. Upewnij sie ze wybrales wszystkie opcje np    ( kapuza, kurtka, sandaly, bez lub z narzedziamy sakwa i peleryna) bo moze ci zle pokazywac i obliczyc dlatego wazne jest zaznaczenie po jednej opcji z rubryki
+7. Nie chcialo mi sie dodawac broni i offhandow bo za duzo roznych craftingow jest na bronie
 </textarea>
         </div>
     </div>
@@ -67,64 +77,80 @@ asdasd
                 Zbroja: { RudaT4: 32, RudaT3: 128, RudaT2: 128 },
                 Sandaly: { WitulaT4: 16, WitulaT3: 64, WitulaT2: 96 },
                 'Buty Skorzane': { SkoraT4: 16, SkoraT3: 64, SkoraT2: 96 },
-                'Buty Metalowe': { RudaT4: 16, RudaT3: 64, RudaT2: 96 }
-            };
+                'Buty Metalowe': { RudaT4: 16, RudaT3: 64, RudaT2: 96 },
+                'Z narzedziami sakwa i peleryna': { DrewnoT4: 60, DrewnoT3: 420, DrewnoT2: 276, WitulaT4: 24, WitulaT3: 120, WitulaT2: 72, SkoraT4: 24, SkoraT3: 120, SkoraT2: 72, RudaT4: 20, RudaT3: 140, RudaT2:82 },
+                Bez: { WitulaT4: 0, WitulaT3: 0, WitulaT2: 0, SkoraT4: 0, SkoraT3: 0, SkoraT2: 0, RudaT4: 0, RudaT3: 0, RudaT2: 0 } // Opcja "Bez" - dodaje 0 do sumy
+};
 
-            var neededMaterials = materials[selectedElement];
+var neededMaterials = materials[selectedElement];
 
-            // Wyświetl wynik na stronie
-            var resultHTML = "<p>Do zrobienia potrzebujesz:</p>";
-            for (var material in neededMaterials) {
-                if (neededMaterials[material] > 0) {
-                    resultHTML += "<p>" + material + ": " + neededMaterials[material] + "</p>";
-                }
+        // Wyświetl wynik na stronie
+        var resultHTML = "<div class='materials'><p>Do zrobienia potrzebujesz:</p><ul>";
+        for (var material in neededMaterials) {
+            if (neededMaterials[material] > 0) {
+                resultHTML += "<li>" + material + ": " + neededMaterials[material] + "</li>";
             }
+        }
+        resultHTML += "</ul></div>";
 
-            document.getElementById(resultId).innerHTML = resultHTML;
+        document.getElementById(resultId).innerHTML = resultHTML;
 
-            // Zsumuj materiały dla wszystkich wybranych elementów
-            var totalMaterials = {
-                WitulaT4: 0,
-                WitulaT3: 0,
-                WitulaT2: 0,
-                SkoraT4:0,
-                SkoraT3:0,
-                SkoraT2:0,
-                RudaT4:0,
-                RudaT3:0,
-                RudaT2:0
-            };
+        // Zsumuj materiały dla wszystkich wybranych elementów
+        var totalMaterials = {
+            DrewnoT4: 0,
+            DrewnoT3: 0,
+            DrewnoT2: 0,
+            WitulaT4: 0,
+            WitulaT3: 0,
+            WitulaT2: 0,
+            SkoraT4: 0,
+            SkoraT3: 0,
+            SkoraT2: 0,
+            RudaT4: 0,
+            RudaT3: 0,
+            RudaT2: 0
+        };
 
-            for (var i = 1; i <= 3; i++) {
-                var element = document.getElementById('element' + i).value;
-                var elementMaterials = materials[element];
-                for (var material in elementMaterials) {
-                    totalMaterials[material] += elementMaterials[material];
-                }
+        for (var i = 1; i <= 4; i++) {
+            var element = document.getElementById('element' + i).value;
+            var elementMaterials = materials[element];
+            for (var material in elementMaterials) {
+                totalMaterials[material] += elementMaterials[material];
             }
-
-            // Wyświetl sumę materiałów
-            var totalResultHTML = "<p>Łącznie potrzebujesz:</p>";
-            for (var material in totalMaterials) {
-                if (totalMaterials[material] > 0) {
-                    totalResultHTML += "<p>" + material + ": " + totalMaterials[material] + "</p>";
-                }
-            }
-
-            document.getElementById('total-wynik').innerHTML = totalResultHTML;
         }
 
-        document.getElementById('element1').addEventListener('change', function() {
-            updateMaterials('element1', 'wynik1');
-        });
+        // Wyświetl sumę materiałów
+        var totalResultHTML = "<div class='total-materials'><p>Łącznie potrzebujesz:</p><ul>";
+        var isEmpty = true; // Zmienna, która sprawdza, czy suma materiałów jest pusta
+        for (var material in totalMaterials) {
+            if (totalMaterials[material] > 0) {
+                totalResultHTML += "<li>" + material + ": " + totalMaterials[material] + "</li>";
+                isEmpty = false; // Jeśli dodano jakąś wartość, zmień wartość isEmpty na false
+            }
+        }
+        totalResultHTML += "</ul></div>";
 
-        document.getElementById('element2').addEventListener('change', function() {
-            updateMaterials('element2', 'wynik2');
-        });
+        // Jeśli suma materiałów jest pusta, wyświetl informację o braku materiałów
+        if (isEmpty) {
+            totalResultHTML = "<div class='total-materials'><p>Brak materiałów</p></div>";
+        }
 
-        document.getElementById('element3').addEventListener('change', function() {
-            updateMaterials('element3', 'wynik3');
-        });
-    </script>
-</body>
-</html>
+        document.getElementById('total-wynik').innerHTML = totalResultHTML;
+    }
+
+    document.getElementById('element1').addEventListener('change', function () {
+        updateMaterials('element1', 'wynik1');
+    });
+
+    document.getElementById('element2').addEventListener('change', function () {
+        updateMaterials('element2', 'wynik2');
+    });
+
+    document.getElementById('element3').addEventListener('change', function () {
+        updateMaterials('element3', 'wynik3');
+    });
+
+    document.getElementById('element4').addEventListener('change', function () {
+        updateMaterials('element4', 'wynik4');
+    });
+</script>
