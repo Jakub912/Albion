@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator materiałów</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left">
+            <h1>Kalkulator materiałów na ubrania</h1>
+            <div>
+                <label for="element1">Wybiecz Czapke:</label>
+                <select id="element1">
+                    <option value="Kapuza">Kapuza</option>
+                    <option value="Kaptur">Kaptur</option>
+                    <option value="Helm">Helm</option>
+                </select>
+            </div>
+            <div id="wynik1" class="wynik"></div>
+
+            <div>
+                <label for="element2">Wybierz Klate:</label>
+                <select id="element2">
+                    <option value="Szata">Szata</option>
+                    <option value="Kurtka">Kurtka</option>
+                    <option value="Zbroja">Zbroja</option>
+                </select>
+            </div>
+            <div id="wynik2" class="wynik"></div>
+
+            <div>
+                <label for="element3">Wybierz Buty:</label>
+                <select id="element3">
+                    <option value="Sandaly">Sandaly</option>
+                    <option value="Buty Skorzane">Buty Skorzane</option>
+                    <option value="Buty Metalowe">Buty Metalowe</option>
+                </select>
+            </div>
+            <div id="wynik3" class="wynik"></div>
+
+            <div id="total-wynik" class="total-wynik"></div>
+        </div>
+        <div class="right">
+            <h2>Instrukcja Craftowania</h2>
+            <textarea id="crafting-instruction" readonly>
+1. Zrób 8(czapka,buty) 4(klata) części setu T2
+2 Zbadaj aby otrzymać fame na crafting T3 i wytworz Set T3
+3 Następnie aby odblokować T4 należy wytworzyć 2 razy calego seta T3
+4 Zbadaj sety T3 aby otrzymac fame i odblokować crafting T4
+5 Wytworz set T4 i ciesz sie swoim secikiem
+asdasd
+</textarea>
+        </div>
+    </div>
+
+    <script>
+        function updateMaterials(elementId, resultId) {
+            var selectedElement = document.getElementById(elementId).value;
+            var materials = {
+                Kapuza: { WitulaT4: 16, WitulaT3: 64, WitulaT2: 96 },
+                Kaptur: { SkoraT4: 16, SkoraT3: 64, SkoraT2: 96 },
+                Helm: { RudaT4: 16, RudaT3: 64, RudaT2: 96 },
+                Szata: { WitulaT4: 32, WitulaT3: 128, WitulaT2: 128 },
+                Kurtka: { SkoraT4: 32, SkoraT3: 128, SkoraT2: 128 },
+                Zbroja: { RudaT4: 32, RudaT3: 128, RudaT2: 128 },
+                Sandaly: { WitulaT4: 16, WitulaT3: 64, WitulaT2: 96 },
+                'Buty Skorzane': { SkoraT4: 16, SkoraT3: 64, SkoraT2: 96 },
+                'Buty Metalowe': { RudaT4: 16, RudaT3: 64, RudaT2: 96 }
+            };
+
+            var neededMaterials = materials[selectedElement];
+
+            // Wyświetl wynik na stronie
+            var resultHTML = "<p>Do zrobienia potrzebujesz:</p>";
+            for (var material in neededMaterials) {
+                if (neededMaterials[material] > 0) {
+                    resultHTML += "<p>" + material + ": " + neededMaterials[material] + "</p>";
+                }
+            }
+
+            document.getElementById(resultId).innerHTML = resultHTML;
+
+            // Zsumuj materiały dla wszystkich wybranych elementów
+            var totalMaterials = {
+                WitulaT4: 0,
+                WitulaT3: 0,
+                WitulaT2: 0,
+                SkoraT4:0,
+                SkoraT3:0,
+                SkoraT2:0,
+                RudaT4:0,
+                RudaT3:0,
+                RudaT2:0
+            };
+
+            for (var i = 1; i <= 3; i++) {
+                var element = document.getElementById('element' + i).value;
+                var elementMaterials = materials[element];
+                for (var material in elementMaterials) {
+                    totalMaterials[material] += elementMaterials[material];
+                }
+            }
+
+            // Wyświetl sumę materiałów
+            var totalResultHTML = "<p>Łącznie potrzebujesz:</p>";
+            for (var material in totalMaterials) {
+                if (totalMaterials[material] > 0) {
+                    totalResultHTML += "<p>" + material + ": " + totalMaterials[material] + "</p>";
+                }
+            }
+
+            document.getElementById('total-wynik').innerHTML = totalResultHTML;
+        }
+
+        document.getElementById('element1').addEventListener('change', function() {
+            updateMaterials('element1', 'wynik1');
+        });
+
+        document.getElementById('element2').addEventListener('change', function() {
+            updateMaterials('element2', 'wynik2');
+        });
+
+        document.getElementById('element3').addEventListener('change', function() {
+            updateMaterials('element3', 'wynik3');
+        });
+    </script>
+</body>
+</html>
